@@ -42,6 +42,7 @@ public class MatrixBrain {
             }
             //Square matrix calculation result
             matrices.add(matrix);
+            System.out.println("Matrix " + matrix.name + " has been calculated!");
         }
     }
 
