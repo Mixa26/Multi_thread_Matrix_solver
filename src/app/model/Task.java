@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.RecursiveTask;
 
@@ -18,6 +19,8 @@ public class Task extends RecursiveTask {
 
     private Matrix matrixAInfo, matrixBInfo;
     private List<List<BigInteger>> matrixA, matrixB;
+
+    private Future<List<List<BigInteger>>> FmatrixA, FmatrixB;
     private TaskType taskType;
     public File matrixFile;
 
@@ -28,10 +31,17 @@ public class Task extends RecursiveTask {
 
     private long fileEnd;
 
-    //private List<List<BigInteger>> check;
-
     public Task(TaskType taskType) {
         this.taskType = taskType;
+    }
+
+    public Task(Matrix matrixAInfo, Future<List<List<BigInteger>>> FmatrixA, Future<List<List<BigInteger>>> FmatrixB, TaskType taskType, int start, int end) {
+        this.matrixAInfo = matrixAInfo;
+        this.FmatrixA = FmatrixA;
+        this.FmatrixB = FmatrixB;
+        this.taskType = taskType;
+        this.start = start;
+        this.end = end;
     }
 
     public Task(Matrix matrixAInfo, List<List<BigInteger>> matrixA, List<List<BigInteger>> matrixB, TaskType taskType, int start, int end) {
@@ -65,16 +75,12 @@ public class Task extends RecursiveTask {
         int cols = Integer.parseInt(cl[2].split("=")[1]);
 
         matrixA = new ArrayList<>();
-        //check = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             ArrayList<BigInteger> row = new ArrayList<>();
-            //ArrayList<BigInteger> row1 = new ArrayList<>();
             for (int j = 0; j < cols; j++) {
                 row.add(BigInteger.ZERO);
-                //row1.add(BigInteger.ZERO);
             }
             matrixA.add(row);
-            //check.add(row1);
         }
     }
 
@@ -257,6 +263,15 @@ public class Task extends RecursiveTask {
             res.addAll(rightRes);
 
             return res;
+        } else if (taskType.equals(TaskType.CALC_SQUARE)){
+            Task square = null;
+            try {
+                square = new Task(matrixAInfo, FmatrixA.get(), FmatrixB.get(), TaskType.MULTIPLY, start, end);
+            } catch (InterruptedException | ExecutionException e) {
+                System.out.println("Error calculating square of matrix " + matrixAInfo.name);
+                return null;
+            }
+            return square.compute();
         }
         return null;
     }

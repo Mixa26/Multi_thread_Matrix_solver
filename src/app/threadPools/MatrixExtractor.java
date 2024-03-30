@@ -1,5 +1,6 @@
 package app.threadPools;
 
+import app.TaskQueue;
 import app.model.Matrix;
 import app.model.Task;
 import app.model.TaskType;
@@ -24,12 +25,7 @@ public class MatrixExtractor {
         res.filePath = task.matrixFile.getAbsolutePath();
         res.matrix = matrix;
         MatrixBrain.addMatrixSearchResult(res);
-        /*
-        try {
-            TaskQueue.addTask(new Task(res, matrix.get(), matrix.get(), TaskType.MULTIPLY, 0, matrix.get().size()));
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-        */
+        Matrix squareInfo = new Matrix(res.name+res.name, res.name + res.name, res.rows, res.cols, res.filePath);
+        TaskQueue.addTask(new Task(squareInfo, matrix, matrix, TaskType.CALC_SQUARE, 0, res.rows));
     }
 }

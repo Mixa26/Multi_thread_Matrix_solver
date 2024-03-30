@@ -30,7 +30,6 @@ public class MatrixBrain {
     }
 
     public static void addMatrixMultiplicationResult(Matrix matrix){
-        Matrix addRes = null;
         synchronized (matrices) {
             for (Matrix mat : matrices){
                 if (mat.name.equals(matrix.name)){
@@ -38,8 +37,11 @@ public class MatrixBrain {
                     synchronized (mat){
                         mat.notify();
                     }
+                    return;
                 }
             }
+            //Square matrix calculation result
+            matrices.add(matrix);
         }
     }
 
@@ -94,10 +96,11 @@ public class MatrixBrain {
             name = mat1 + mat2;
         }
 
-        if (matrix1.size() != matrix2.get(0).size()){
+        if (matrix1.get(0).size() != matrix2.size()){
             System.err.println("Matrix " + mat1 + " and " + mat2 + " can't be multiplied!\n" +
                     "Matrix " + mat1 + " is of dimensions " + matrix1.size() + "x" + matrix1.get(0).size() + "\n" +
                     "Matrix " + mat2 + " is of dimensions " + matrix2.size() + "x" + matrix2.get(0).size());
+            return null;
         }
 
         toBeCalculated = new Matrix(name, mat1+mat2, matrix1.size(), matrix1.get(0).size(), null);

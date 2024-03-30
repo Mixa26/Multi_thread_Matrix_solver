@@ -15,12 +15,12 @@ public class TaskCordinator implements Runnable {
         while (running){
             try {
                 Task task = TaskQueue.waitForTask();
-                if (task.getTaskType().equals(TaskType.MULTIPLY)){
+                if (task.getTaskType().equals(TaskType.MULTIPLY) || task.getTaskType().equals(TaskType.CALC_SQUARE)) {
                     MatrixMultiplier.addTask(task);
                 } else if (task.getTaskType().equals(TaskType.CREATE)) {
                     MatrixExtractor.addTask(task);
                 }
-                else if (task.getTaskType().equals(TaskType.SHUT_DOWN)){
+                else if (task.getTaskType().equals(TaskType.SHUT_DOWN)) {
                     MatrixMultiplier.addTask(task);
                     MatrixExtractor.addTask(task);
                     running = false;
