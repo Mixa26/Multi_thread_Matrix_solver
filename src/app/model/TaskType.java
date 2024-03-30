@@ -2,5 +2,6 @@ package app.model;
 
 public enum TaskType {
     CREATE,
-    MULTIPLY
+    MULTIPLY,
+    SHUT_DOWN
 }

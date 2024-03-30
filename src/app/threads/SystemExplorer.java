@@ -16,6 +16,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static app.Main.dirsToSearch;
 import static app.Main.sysExplorerSleepTime;
+import static app.Main.startDir;
+import static app.Main.running;
 
 public class SystemExplorer implements Runnable {
 
@@ -75,9 +77,9 @@ public class SystemExplorer implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (running) {
             for (String dir : dirsToSearch) {
-                String workingDir = System.getProperty("user.dir");
+                String workingDir = System.getProperty("user.dir") + startDir;
                 searchFiles(workingDir + dir, dir, ".rix");
             }
 
@@ -108,5 +110,9 @@ public class SystemExplorer implements Runnable {
                 throw new RuntimeException(e);
             }
         }
+
+        Task shutdownTask = new Task(TaskType.SHUT_DOWN);
+        TaskQueue.addTask(shutdownTask);
+        System.out.println("System Explorer has stopped.");
     }
 }

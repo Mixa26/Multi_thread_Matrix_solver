@@ -34,9 +34,8 @@ public class SaveTask implements Runnable{
                     if (matrixA.get(i).get(j).equals(BigInteger.ZERO)){
                         continue;
                     }
-                    writer.write(i + "," + j + " = " + matrixA.get(i).get(j));
+                    writer.write(i + "," + j + " = " + matrixA.get(i).get(j) + "\n");
                 }
-                writer.newLine();
             }
 
             System.out.println("Matrix data has been written to " + filePath);

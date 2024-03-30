@@ -19,13 +19,15 @@ public class Main {
     public static int maximumFileChunkSize;
     public static int maximumRowsSize;
 
+    public static String startDir;
+
+    public static boolean running = true;
+
     public static final CopyOnWriteArrayList<String> dirsToSearch = new CopyOnWriteArrayList<>();
 
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-
-        boolean running = true;
 
         SystemExplorer systemExplorer = new SystemExplorer();
         Thread systemExplorerThread = new Thread(systemExplorer);
@@ -42,7 +44,8 @@ public class Main {
             sysExplorerSleepTime = Integer.parseInt(properties.getProperty("sys_explorer_sleep_time"));
             maximumFileChunkSize = Integer.parseInt(properties.getProperty("maximum_file_chunk_size"));
             maximumRowsSize = Integer.parseInt(properties.getProperty("maximum_rows_size"));
-            dirsToSearch.add(properties.getProperty("start_dir"));
+            //dirsToSearch.add(properties.getProperty("start_dir"));
+            startDir = properties.getProperty("start_dir");
         }
         catch(IOException e) {
             e.printStackTrace();
@@ -196,6 +199,7 @@ public class Main {
                 case "stop":
                     System.out.println("Stopping...");
                     running = false;
+                    MatrixBrain.shutDown();
                     break;
                 default:
                     System.out.println("Unknown command");
@@ -204,8 +208,10 @@ public class Main {
 
         try {
             systemExplorerThread.join();
+            taskCordinatorThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println("Main/CLI has stopped.");
     }
 }

@@ -229,4 +229,9 @@ public class MatrixBrain {
             SystemExplorer.removeFile(fileOfMatrix);
         }
     }
+
+    public static void shutDown(){
+        threadPool.shutdown();
+        System.out.println("Matrix brain has stopped.");
+    }
 }

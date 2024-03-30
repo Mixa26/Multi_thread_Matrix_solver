@@ -8,15 +8,22 @@ import app.threadPools.MatrixMultiplier;
 
 public class TaskCordinator implements Runnable {
 
+    private boolean running = true;
+
     @Override
     public void run() {
-        while (true){
+        while (running){
             try {
                 Task task = TaskQueue.waitForTask();
                 if (task.getTaskType().equals(TaskType.MULTIPLY)){
                     MatrixMultiplier.addTask(task);
                 } else if (task.getTaskType().equals(TaskType.CREATE)) {
                     MatrixExtractor.addTask(task);
+                }
+                else if (task.getTaskType().equals(TaskType.SHUT_DOWN)){
+                    MatrixMultiplier.addTask(task);
+                    MatrixExtractor.addTask(task);
+                    running = false;
                 }
                 else {
                     throw new IllegalArgumentException("Invalid task type");
@@ -25,5 +32,7 @@ public class TaskCordinator implements Runnable {
                 e.printStackTrace();
             }
         }
+
+        System.out.println("Task coordinator has stopped.");
     }
 }

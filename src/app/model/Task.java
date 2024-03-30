@@ -28,6 +28,12 @@ public class Task extends RecursiveTask {
 
     private long fileEnd;
 
+    //private List<List<BigInteger>> check;
+
+    public Task(TaskType taskType) {
+        this.taskType = taskType;
+    }
+
     public Task(Matrix matrixAInfo, List<List<BigInteger>> matrixA, List<List<BigInteger>> matrixB, TaskType taskType, int start, int end) {
         this.matrixAInfo = matrixAInfo;
         this.matrixA = matrixA;
@@ -59,12 +65,16 @@ public class Task extends RecursiveTask {
         int cols = Integer.parseInt(cl[2].split("=")[1]);
 
         matrixA = new ArrayList<>();
+        //check = new ArrayList<>();
         for (int i = 0; i < rows; i++) {
             ArrayList<BigInteger> row = new ArrayList<>();
+            //ArrayList<BigInteger> row1 = new ArrayList<>();
             for (int j = 0; j < cols; j++) {
                 row.add(BigInteger.ZERO);
+                //row1.add(BigInteger.ZERO);
             }
             matrixA.add(row);
+            //check.add(row1);
         }
     }
 
@@ -81,7 +91,7 @@ public class Task extends RecursiveTask {
     private String readFirstLine() {
         try (BufferedReader reader = new BufferedReader(new FileReader(matrixFile))) {
             String line = reader.readLine();
-            fileStart = line.getBytes().length + 2;
+            fileStart = line.getBytes().length + 1;
             return line;
         } catch (IOException e) {
             e.printStackTrace();
@@ -156,7 +166,7 @@ public class Task extends RecursiveTask {
 
             while ((line = reader.readLine()) != null && bytesRead < (end - start)) {
                 lines.add(line);
-                bytesRead += line.getBytes().length + 2;
+                bytesRead += line.getBytes().length + 1;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -180,9 +190,18 @@ public class Task extends RecursiveTask {
                     }
                     String[] first = line.split(",");
                     String[] second = first[1].split("=");
-                    String val = second[1].trim();
-                    int row = Integer.parseInt(first[0].trim());
-                    int col = Integer.parseInt(second[0].trim());
+                    String val;
+                    int row;
+                    int col;
+                    try {
+                        val = second[1].trim();
+                        row = Integer.parseInt(first[0].trim());
+                        col = Integer.parseInt(second[0].trim());
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error parsing row or column: " + e.getMessage());
+                        System.err.println("Line causing the error: " + line);
+                        continue;
+                    }
 
                     matrixA.get(row).set(col, new BigInteger(val));
                 }
@@ -212,8 +231,12 @@ public class Task extends RecursiveTask {
 
                 for (int i = start; i < end; i++) {
                     List<BigInteger> row = new ArrayList<>();
-                    for (int j = 0; j < matrixA.get(start).size(); j++) {
-                        row.add(matrixA.get(i).get(j).multiply(matrixB.get(j).get(i)));
+                    for (int z = 0; z < matrixB.get(0).size(); z++) {
+                        BigInteger acc = BigInteger.ZERO;
+                        for (int j = 0; j < matrixA.get(start).size(); j++) {
+                            acc = acc.add(matrixA.get(i).get(j).multiply(matrixB.get(j).get(z)));
+                        }
+                        row.add(acc);
                     }
                     res.add(row);
                 }
