@@ -174,7 +174,7 @@ public class MatrixBrain {
         System.out.println("Matrix " + name + " doesn't exist!");
     }
 
-    public static void deleteMatrix(String nameOrFile){
+    public static void deleteMatrix(String nameOrFile, boolean updateSystemExplorer){
         String fileOfMatrix = null;
         boolean err = true;
 
@@ -195,7 +195,7 @@ public class MatrixBrain {
                     }
                 }
                 if (err){
-                    System.out.println("Matrix with file" + nameOrFile + " doesn't exist!");
+                    System.out.println("Matrix with file " + nameOrFile + " doesn't exist!");
                     return;
                 }
                 iterator = matrices.iterator();
@@ -229,7 +229,7 @@ public class MatrixBrain {
             }
         }
 
-        if (fileOfMatrix != null) {
+        if (fileOfMatrix != null && updateSystemExplorer) {
             SystemExplorer.removeFile(fileOfMatrix);
         }
     }

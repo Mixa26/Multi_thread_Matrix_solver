@@ -1,8 +1,10 @@
 package app.threads;
 
 import app.TaskQueue;
+import app.model.Matrix;
 import app.model.Task;
 import app.model.TaskType;
+import app.threadPools.MatrixBrain;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +28,8 @@ public class SystemExplorer implements Runnable {
     private static List<File> filesToScan = new ArrayList<>();
 
     private static final CopyOnWriteArrayList<String> toRemove = new CopyOnWriteArrayList<>();
+
+    private static boolean shouldDelete = false;
 
     public static void searchFiles(String directoryPath, String dirToRem, String extension) {
 
@@ -57,7 +61,8 @@ public class SystemExplorer implements Runnable {
                         filesToScan.add(file.toFile());
                     }
                     else if (files.contains(filePath) && !filesLastModified.get(files.indexOf(filePath)).equals(file.toFile().lastModified())) {
-                        System.out.println("Found matrix file|" + file.getFileName());
+                        shouldDelete = true;
+                        System.out.println("Changes in matrix file|" + file.getFileName());
                         filesLastModified.remove(files.indexOf(filePath));
                         files.remove(filePath);
                         filesToScan.add(file.toFile());
@@ -84,6 +89,11 @@ public class SystemExplorer implements Runnable {
             }
 
             for (File file : filesToScan){
+
+                if (shouldDelete) {
+                    MatrixBrain.deleteMatrix(file.getAbsolutePath(), false);
+                    shouldDelete = false;
+                }
 
                 Task newTask = new Task(TaskType.CREATE, file, 0, file.length());
                 TaskQueue.addTask(newTask);

@@ -191,7 +191,7 @@ public class Main {
                     break;
                 case "clear":
                     if (command.length == 2) {
-                        MatrixBrain.deleteMatrix(command[1]);
+                        MatrixBrain.deleteMatrix(command[1], true);
                     } else {
                         System.out.println("Usage: clear <matrix_name>/<file_name>");
                     }
