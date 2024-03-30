@@ -34,8 +34,8 @@ public class MatrixBrain {
             for (Matrix mat : matrices){
                 if (mat.name.equals(matrix.name)){
                     mat.matrix = matrix.matrix;
-                    synchronized (mat){
-                        mat.notify();
+                    synchronized (matrix){
+                        matrix.notify();
                     }
                     return;
                 }
